@@ -2,6 +2,10 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import authRouter from './routes/auth.routes.js'
+import userRouter from './routes/user.routes.js';
+import videoRouter from './routes/video.routes.js';
+import commentRouter from './routes/comment.routes.js';
 
 const app = express();
 dotenv.config();
@@ -24,3 +28,19 @@ mongoose
 
 app.use(cookieParser());
 app.use(express.json());
+
+app.use('/api/auth', authRouter);
+app.use('/api/users', userRouter);
+app.use('/api/videos', videoRouter);
+app.use('/api/comments', commentRouter);
+
+app.use((err, req, res, next) => {
+    const status = err.status || 500;
+    const message = err.message || 'Something went wrong!!!';
+
+    return res.status(status).json({
+        success: false,
+        status,
+        message
+    });
+});
